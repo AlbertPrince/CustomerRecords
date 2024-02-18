@@ -16,8 +16,12 @@ namespace CustomerRecords.Api.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Transaction>()
-                .Property(t => t.TotalAmount)
+                .Property(t => t.Amount)
                 .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.Balance)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

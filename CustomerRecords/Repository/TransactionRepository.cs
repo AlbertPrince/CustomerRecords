@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerRecords.Api.Repository
 {
-    public class TransactionRepository : ITransactionsRepository
+    public class TransactionRepository : ITransactionRepository
     {
         private readonly CustomerTransactionContext _context;
         private readonly IMapper _mapper;
@@ -16,46 +16,36 @@ namespace CustomerRecords.Api.Repository
             _mapper = mapper;
             _context = context;
         }
-        public async Task<decimal> GetCustomerBalance(Guid customerId)
+        
+
+        public async Task<decimal> RecordTransaction(CreateTransactionRequest request)
         {
+            var transaction = _mapper.Map<Transaction>(request);
+            _context.Transactions.Add(transaction);
+
+
+            await _context.SaveChangesAsync();
+
             var customerTransactions = await _context.Transactions
-            .Where(t => t.CustomerId == customerId)
-            .OrderBy(t => t.Date)
-            .ToListAsync();
+                .Where(t => t.CustomerId == transaction.CustomerId)
+                .OrderBy(t => t.Date)
+                .ToListAsync();
 
             decimal balance = 0;
             foreach (var trans in customerTransactions)
             {
-                balance += trans.Amount;
+                if (trans.IsInvoice)
+                {
+                    balance += trans.Amount;
+                }
+                else
+                {
+                    balance -= trans.Amount;
+                }
             }
 
             return balance;
         }
 
-        public async Task RecordTransaction(CreateTransactionRequest request)
-        {
-            var transaction = _mapper.Map<Transaction>(request);
-            await _context.SaveChangesAsync();
-
-            if (transaction.IsInvoice)
-            {
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == transaction.CustomerId);
-                if (customer != null)
-                {
-                    customer.Balance += transaction.Amount;
-                    await _context.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == transaction.CustomerId);
-                if (customer != null)
-                {
-                    customer.Balance -= transaction.Amount;
-                    await _context.SaveChangesAsync();
-                }
-            }
-
-        }
     }
 }
