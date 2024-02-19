@@ -22,6 +22,7 @@ namespace CustomerRecords.Api.Context
             modelBuilder.Entity<Customer>()
                 .Property(c => c.Balance)
                 .HasColumnType("decimal(18,2)");
+
         }
     }
 }

@@ -17,16 +17,10 @@ namespace CustomerRecords.Api.Repository
             _context = context;
         }
 
-
         public async Task<decimal> RecordTransaction(CreateTransactionRequest request)
         {
             var transaction = _mapper.Map<Transaction>(request);
-            var customer = await _context.Customers.FindAsync(transaction.CustomerId);
-
-            if (customer == null)
-            {
-                throw new Exception("Customer not found");
-            }
+            var customer = await _context.Customers.FindAsync(transaction.CustomerId) ?? throw new Exception("Customer not found");
 
             if (request.Amount == 0)
             {
