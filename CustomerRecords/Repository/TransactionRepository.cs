@@ -16,36 +16,43 @@ namespace CustomerRecords.Api.Repository
             _mapper = mapper;
             _context = context;
         }
-        
+
 
         public async Task<decimal> RecordTransaction(CreateTransactionRequest request)
         {
             var transaction = _mapper.Map<Transaction>(request);
-            _context.Transactions.Add(transaction);
+            var customer = await _context.Customers.FindAsync(transaction.CustomerId);
 
-
-            await _context.SaveChangesAsync();
-
-            var customerTransactions = await _context.Transactions
-                .Where(t => t.CustomerId == transaction.CustomerId)
-                .OrderBy(t => t.Date)
-                .ToListAsync();
-
-            decimal balance = 0;
-            foreach (var trans in customerTransactions)
+            if (customer == null)
             {
-                if (trans.IsInvoice)
-                {
-                    balance += trans.Amount;
-                }
-                else
-                {
-                    balance -= trans.Amount;
-                }
+                throw new Exception("Customer not found");
             }
 
-            return balance;
+            if (request.Amount == 0)
+            {
+                throw new Exception("The transaction amount must be greater than 0");
+            }
+
+            if (transaction.IsInvoice)
+            {
+                customer.Balance += transaction.Amount;
+            }
+            else
+            {
+                if (request.Amount > customer.Balance)
+                {
+                    throw new Exception("The transaction amount can't be greater than the customer's balance for payments");
+                }
+                customer.Balance -= transaction.Amount;
+            }
+
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            return customer.Balance;
         }
+
+
 
     }
 }

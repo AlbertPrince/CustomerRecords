@@ -5,6 +5,6 @@ namespace CustomerRecords.Api.IRepository
 {
     public interface ITransactionReportRepository
     {
-        public Task<TransactionReportDto> GetTransactionReports(CreateTransactionReportRequest request);
+        public Task<TransactionReportDto> GetTransactionReports(TransactionReportFilter request);
     }
 }

@@ -26,7 +26,6 @@ namespace CustomerRecords.Api.Repository
         {
             var query = _context.Transactions.AsQueryable();
 
-            // Apply filters based on request parameters
             if (filter.CustomerId.HasValue)
             {
                 query = query.Where(t => t.CustomerId == filter.CustomerId);
@@ -42,13 +41,10 @@ namespace CustomerRecords.Api.Repository
                 query = query.Where(t => t.Date <= filter.EndDate);
             }
 
-            // Retrieve transactions based on the filtered query
             var transactions = await query.OrderBy(t => t.Date).ToListAsync();
 
-            // Map transactions to DTOs
             var transactionDtos = _mapper.Map<List<TransactionDto>>(transactions);
 
-            // Create and return the transaction report
             var report = new TransactionReportDto
             {
                 StartDate = filter.StartDate,

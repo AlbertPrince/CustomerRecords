@@ -8,7 +8,7 @@
         public Decimal Amount { get; set; }
         public Boolean IsInvoice { get; set; }
         public Guid CustomerId { get; set; } 
-        public Customer? Customer { get; set; }
+        public required Customer Customer { get; set; }
 
     }
 }

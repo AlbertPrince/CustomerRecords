@@ -9,6 +9,5 @@ namespace CustomerRecords.Api.Request
         public int Balance { get; set; } = 0;
         public long? PhoneNumber { get; set; }
         public string? Address { get; set; }
-        public List<Transaction>? Transactions { get; set; }
     }
 }

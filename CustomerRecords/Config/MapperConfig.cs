@@ -11,6 +11,9 @@ namespace CustomerRecords.Api.Config
         {
             CreateMap<Customer, CustomerDto>().ReverseMap();
             CreateMap<CreateCustomerRequest, Customer>();
+            CreateMap<CreateTransactionRequest, Transaction>();
+            CreateMap<Transaction, TransactionDto>().ReverseMap();
+            CreateMap<TransactionReport, TransactionReportDto>().ReverseMap();
         }
     }
 }

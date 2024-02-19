@@ -18,7 +18,7 @@ namespace CustomerRecords.Api.Controllers
         }
 
         [HttpPost("generate")]
-        public async Task<ActionResult<TransactionReportDto>> GenerateTransactionReport(CreateTransactionReportRequest request)
+        public async Task<ActionResult<TransactionReportDto>> GenerateTransactionReport([FromQuery] TransactionReportFilter request)
         {
             var transactionReport = await _transactionReportRepository.GetTransactionReports(request);
             return Ok(transactionReport);

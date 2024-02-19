@@ -42,7 +42,6 @@ namespace CustomerRecords.Api.Repository
                 customer.PhoneNumber = request.PhoneNumber;
                 customer.Description = request.Description;
                 customer.Balance = request.Balance;
-                customer.Transactions = request.Transactions;
 
                 _context.Customers.Update(customer);
                 await _context.SaveChangesAsync();
